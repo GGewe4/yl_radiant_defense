@@ -18,7 +18,7 @@ class Game:
         pygame.mixer.music.play(loops=-1)
         pygame.mixer.music.set_volume(0.3)
 
-    def run(self):
+    def run(self):        
         run = True
         mpause = False
         # clock = pygame.time.Clock()
