@@ -15,8 +15,8 @@ class Game:
         self.backg = pygame.transform.scale(self.backg, (self.width, self.height))
         self.clicks = []  # delete
 
-        self.ad = GMusic()
-        self.ad.play_m('gelik')
+        self.mus = GMusic(pause=True)
+        self.mus.play_m('gelik')
 
     def run(self):        
         run = True
@@ -35,14 +35,14 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.clicks.clear()
-                        if self.ad.is_paused:
-                            self.ad.unpause_m()
+                        if self.mus.is_paused:
+                            self.mus.unpause_m()
                         else:
-                            self.ad.pause_m()
+                            self.mus.pause_m()
                     elif event.key == pygame.K_g:
-                        self.ad.play_m('gelik')
+                        self.mus.play_m('gelik')
                     elif event.key == pygame.K_m:
-                        self.ad.play_m('zihte')
+                        self.mus.play_m('zihte')
 
             self.draw()
 

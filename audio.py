@@ -29,6 +29,8 @@ class GMusic:
         pygame.mixer.music.load(path)
         pygame.mixer.music.play(loops=-1)
         pygame.mixer.music.set_volume(self.volume)
+        if self.is_paused:
+            self.pause_m()
 
     def change_volume(self, new_value):
         self.volume = new_value
