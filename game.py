@@ -1,6 +1,9 @@
 import pygame
 from audio import GMusic
 from enemies.minotaur import Minotaur
+from enemies.golem import Golem
+from enemies.wraith import Wraith
+from enemies.satyr import Satyr
 from enemies.enemy import all_sprites
 import os
 
@@ -20,7 +23,7 @@ class Game:
         self.circ = []
         with open(os.path.join(f'levels/level{1}/path.txt')) as file:
             self.circ = eval(''.join(file.readlines()))
-        self.enemies = [Minotaur()]
+        self.enemies = [Golem(), Wraith()]
 
         self.mus = GMusic()
         self.mus.play_m('gelik')
@@ -28,7 +31,9 @@ class Game:
     def run(self):
         run = True
         clock = pygame.time.Clock()
+        self.c = 0
         while run:
+            self.c += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -61,7 +66,8 @@ class Game:
         for em in self.enemies:
             em.new_move(self.wind)
         all_sprites.draw(self.wind)
-        all_sprites.update()
+        if self.c % 6 == 0:
+            all_sprites.update()
         pygame.display.update()
 
 
