@@ -3,6 +3,7 @@ from audio import GMusic
 from enemies.minotaur import Minotaur
 from enemies.enemy import all_sprites
 import os
+import sys
 
 #  [(856, 19), (820, 131), (670, 153), (439, 157), (342, 209),
 #  (302, 266), (336, 321), (380, 389), (360, 455),
@@ -10,10 +11,10 @@ import os
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, wind):
         self.width = 1280  # 1600 900, 16/9
         self.height = 720
-        self.wind = pygame.display.set_mode((self.width, self.height))
+        self.wind = wind
         self.backg = pygame.image.load("data/bg_test5.png")
         self.backg = pygame.transform.scale(self.backg, (self.width, self.height))
         self.clicks = []  # delete
@@ -31,7 +32,8 @@ class Game:
         while run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False
+
+                    sys.exit()
 
                 pos = pygame.mouse.get_pos()
 
@@ -51,7 +53,7 @@ class Game:
                         self.mus.play_m('zihte')
             self.draw()
             clock.tick(120)
-        pygame.quit()
+
         print(self.clicks)
 
     def draw(self):
@@ -63,8 +65,3 @@ class Game:
         all_sprites.draw(self.wind)
         all_sprites.update()
         pygame.display.update()
-
-
-pygame.init()
-g = Game()
-g.run()
