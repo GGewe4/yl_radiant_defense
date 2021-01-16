@@ -1,5 +1,8 @@
 import pygame
 from audio import GMusic
+from enemies.minotaur import Minotaur
+from enemies.enemy import all_sprites
+import os
 
 #  [(856, 19), (820, 131), (670, 153), (439, 157), (342, 209),
 #  (302, 266), (336, 321), (380, 389), (360, 455),
@@ -14,15 +17,18 @@ class Game:
         self.backg = pygame.image.load("data/bg_test5.png")
         self.backg = pygame.transform.scale(self.backg, (self.width, self.height))
         self.clicks = []  # delete
+        self.circ = []
+        with open(os.path.join(f'levels/level{1}/path.txt')) as file:
+            self.circ = eval(''.join(file.readlines()))
+        self.enemies = [Minotaur()]
 
-        self.mus = GMusic(pause=True)
+        self.mus = GMusic()
         self.mus.play_m('gelik')
 
-    def run(self):        
+    def run(self):
         run = True
-        # clock = pygame.time.Clock()
+        clock = pygame.time.Clock()
         while run:
-            # clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -43,15 +49,19 @@ class Game:
                         self.mus.play_m('gelik')
                     elif event.key == pygame.K_m:
                         self.mus.play_m('zihte')
-
             self.draw()
-
+            clock.tick(120)
         pygame.quit()
+        print(self.clicks)
 
     def draw(self):
         self.wind.blit(self.backg, (0, 0))
         for p in self.clicks:
             pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
+        for em in self.enemies:
+            em.new_move(self.wind)
+        all_sprites.draw(self.wind)
+        all_sprites.update()
         pygame.display.update()
 
 

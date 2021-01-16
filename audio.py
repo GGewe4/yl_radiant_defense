@@ -7,6 +7,7 @@ class GMusic:
         self.is_loaded = load
         self.volume = volume
         self.name = name
+        self.music = []
 
     def unload_m(self):
         pygame.mixer.music.unload()
@@ -25,7 +26,7 @@ class GMusic:
             self.unload_m()
             self.is_loaded = True
         self.name = arg
-        path = f"data/{self.name}.mp3"
+        path = f"data/music/{self.name}.mp3"
         pygame.mixer.music.load(path)
         pygame.mixer.music.play(loops=-1)
         pygame.mixer.music.set_volume(self.volume)
