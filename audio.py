@@ -2,7 +2,7 @@ import pygame
 
 
 class GMusic:
-    def __init__(self, pause=False, load=False, volume=0.3, name='gelik'):
+    def __init__(self, pause=False, load=False, volume=0.1, name='gelik'):
         self.is_paused = pause
         self.is_loaded = load
         self.volume = volume
