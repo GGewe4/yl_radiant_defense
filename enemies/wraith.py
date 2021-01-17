@@ -20,4 +20,11 @@ class Wraith(Enemy):
         self.image = self.frames[self.cur_frame]
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_width())
         self.rect = self.rect.move(self.x, self.y)
+        self.vel = 40/120
+        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
         self.change_vel()
+
+        self.delta_x = 20
+        self.delta_y = 0
+        self.min_x = 40
+        self.min_y = 10

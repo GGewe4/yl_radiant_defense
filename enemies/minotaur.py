@@ -21,3 +21,8 @@ class Minotaur(Enemy):
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_width())
         self.rect = self.rect.move(self.x, self.y)
         self.change_vel()
+
+        self.delta_x = 20
+        self.delta_y = 10
+        self.min_x = 40
+        self.min_y = 10

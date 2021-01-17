@@ -4,11 +4,13 @@ import pygame
 import time
 import random
 from audio import GMusic
-from enemies.minotaur import Minotaur
-from enemies.golem import Golem
-from enemies.wraith import Wraith
-from enemies.satyr import Satyr
-from enemies.enemy import all_sprites
+# from enemies.minotaur import Minotaur
+# from enemies.golem import Golem
+# from enemies.wraith import Wraith
+# from enemies.satyr import Satyr
+from towers.tower import towers_sprites
+from towers.stone_tower import StoneTower
+from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
 import os
 
@@ -46,6 +48,7 @@ class Game:
         with open(os.path.join(f'levels/level{1}/path.txt')) as file:
             self.circ = eval(''.join(file.readlines()))
         self.enemies = []
+        self.towers = [StoneTower(100, 100)]
         self.c = 0  # animation count
 
         self.mus = GMusic()
@@ -68,6 +71,7 @@ class Game:
                 pos = pygame.mouse.get_pos()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.towers.append(StoneTower(*pos))
                     self.clicks.append(pos)
 
                 if event.type == NEW_ENEMY:
@@ -100,7 +104,11 @@ class Game:
             pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
         for em in self.enemies:
             em.new_move(self.wind)
-        all_sprites.draw(self.wind)
+        enemies_sprites.draw(self.wind)
         if self.c % 6 == 0:
-            all_sprites.update()
+            enemies_sprites.update()
+        for t in self.towers:
+            t.draw_radius(self.wind)
+        towers_sprites.draw(self.wind)
+        towers_sprites.update()
         pygame.display.update()

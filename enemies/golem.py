@@ -18,6 +18,12 @@ class Golem(Enemy):
         self.state = 0  # 0 if walking, 1 if dying
         self.frames = Golem.imgs[:]
         self.image = self.frames[self.cur_frame]
-        self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_width())
+        self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_height())
         self.rect = self.rect.move(self.x, self.y)
+        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
         self.change_vel()
+
+        self.delta_x = 20
+        self.delta_y = 10
+        self.min_x = 40
+        self.min_y = 10

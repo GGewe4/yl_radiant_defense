@@ -3,12 +3,12 @@ import os
 import sys
 
 DIR_LEVELS = 'levels'
-all_sprites = pygame.sprite.Group()
+enemies_sprites = pygame.sprite.Group()
 
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, level_path=1):
-        super().__init__(all_sprites)
+        super().__init__(enemies_sprites)
         self.max_health = 10
         self.health = 10
         self.frames = []
@@ -28,6 +28,11 @@ class Enemy(pygame.sprite.Sprite):
         self.move_count = 0
         self.move_dis = 0
         self.flipped = True
+
+        self.delta_x = 0
+        self.delta_y = 0
+        self.min_x = 0
+        self.min_y = 0
 
     def draw(self):
         pass
@@ -49,7 +54,8 @@ class Enemy(pygame.sprite.Sprite):
     def new_move(self, wind):
         self.x += self.vel_x
         self.y += self.vel_y
-        self.rect = pygame.Rect(self.x, self.y, self.image.get_width(), self.image.get_width())
+        self.rect = pygame.Rect(self.x, self.y, self.image.get_width() - 20, self.image.get_height())
+        self.hit_box = pygame.Rect(self.x + self.delta_x, self.y + self.delta_y, self.image.get_width() - self.min_x, self.image.get_height() - self.min_y)
         # print(self.x, self.y, '    |    ', self.x2, self.y2)
         self.draw_health_bar(wind)
         if abs(self.x - self.x2) <= self.vel * 2 and abs(self.y - self.y2) <= self.vel * 2:
@@ -82,6 +88,7 @@ class Enemy(pygame.sprite.Sprite):
         health_bar = round(move_by * self.health)
         pygame.draw.rect(win, (255, 0, 0), (self.x + 15, self.y, length, 7), 0)
         pygame.draw.rect(win, (0, 255, 0), (self.x + 15, self.y, health_bar, 7), 0)
+        pygame.draw.rect(win, (255, 255, 255), self.hit_box, 5)
 
 
 def load_image(name, colorkey=None):

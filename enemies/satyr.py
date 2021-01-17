@@ -21,3 +21,8 @@ class Satyr(Enemy):
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_width())
         self.rect = self.rect.move(self.x, self.y)
         self.change_vel()
+
+        self.delta_x = 15
+        self.delta_y = 7
+        self.min_x = 30
+        self.min_y = 17
