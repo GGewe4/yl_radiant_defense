@@ -26,3 +26,5 @@ class Minotaur(Enemy):
         self.delta_y = 10
         self.min_x = 40
         self.min_y = 10
+
+        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())

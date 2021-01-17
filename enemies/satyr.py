@@ -26,3 +26,5 @@ class Satyr(Enemy):
         self.delta_y = 7
         self.min_x = 30
         self.min_y = 17
+
+        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())

@@ -43,6 +43,7 @@ class Enemy(pygame.sprite.Sprite):
     def hit(self, damage):
         self.health -= damage
         if self.health <= 0:
+            pygame.sprite.Sprite.kill(self)
             return True
 
     def update(self):

@@ -48,7 +48,7 @@ class Game:
         with open(os.path.join(f'levels/level{1}/path.txt')) as file:
             self.circ = eval(''.join(file.readlines()))
         self.enemies = []
-        self.towers = [StoneTower(100, 100)]
+        self.towers = []
         self.c = 0  # animation count
 
         self.mus = GMusic()
@@ -100,15 +100,19 @@ class Game:
 
     def draw(self):
         self.wind.blit(self.backg, (0, 0))
-        for p in self.clicks:
-            pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
-        for em in self.enemies:
-            em.new_move(self.wind)
         enemies_sprites.draw(self.wind)
         if self.c % 6 == 0:
             enemies_sprites.update()
+        if self.c % 8 == 0:
+            towers_sprites.update(self.enemies)
         for t in self.towers:
             t.draw_radius(self.wind)
+            t.attack(self.enemies)
         towers_sprites.draw(self.wind)
-        towers_sprites.update()
+        for em in self.enemies:
+            # pygame.draw.circle(self.wind, (0, 255, 0), (em.hit_box.x + em.hit_box.width // 2,
+            # em.hit_box.y + em.hit_box.height // 2), 5)
+            em.new_move(self.wind)
+        for p in self.clicks:
+            pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
         pygame.display.update()
