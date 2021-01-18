@@ -9,7 +9,7 @@ from audio import GMusic
 # from enemies.wraith import Wraith
 # from enemies.satyr import Satyr
 from towers.tower import towers_sprites
-from towers.stone_tower import StoneTower
+from towers.magic_tower import StoneTower
 from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
 import os

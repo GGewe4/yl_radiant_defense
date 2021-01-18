@@ -49,12 +49,13 @@ class Tower(pygame.sprite.Sprite):
                 if intersects(enemy.hit_box, self.range, (self.x, self.y)):
                     self.state = True
                     if self.archer_count == len(self.attack_imgs) - 1:
-                        if enemy.hit(self.damage):
-                            enemies.remove(enemy)
                         enemy_closest.append(enemy)
-                        self.archer_count = 0
             if not enemy_closest:
                 self.state = False
+            for enemy in enemy_closest:
+                if enemy.hit(self.damage):
+                    enemies.remove(enemy)
+                self.archer_count = 0
 
     def update(self, enemies):
         for enemy in enemies:
