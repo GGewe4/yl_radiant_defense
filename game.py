@@ -9,9 +9,10 @@ from audio import GMusic
 # from enemies.wraith import Wraith
 # from enemies.satyr import Satyr
 from towers.tower import towers_sprites
-from towers.magic_tower import StoneTower
+from towers.magic_tower import MagicTower
 from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
+from towers.archer_tower import ArcherTower
 import os
 
 #  [(856, 19), (820, 131), (670, 153), (439, 157), (342, 209),
@@ -71,8 +72,12 @@ class Game:
                 pos = pygame.mouse.get_pos()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.towers.append(StoneTower(*pos))
-                    self.clicks.append(pos)
+                    if event.button == 1:
+                        self.towers.append(ArcherTower(*pos))
+                        self.clicks.append(pos)
+                    elif event.button == 3:
+                        self.towers.append(MagicTower(*pos))
+                        self.clicks.append(pos)
 
                 if event.type == NEW_ENEMY:
                     group.update(self.enemies)
