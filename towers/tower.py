@@ -34,7 +34,7 @@ class Tower(pygame.sprite.Sprite):
         self.range = 0
         self.archer_count = 0
         self.attack_imgs = []
-        self.state = False
+        self.is_attack = False
         self.splash = False
 
     def upgrade(self):
@@ -44,11 +44,10 @@ class Tower(pygame.sprite.Sprite):
         pass
 
     def attack(self, enemies):
-        if self.state:
+        if self.is_attack:
             enemy_closest = []
             for enemy in enemies:
                 if intersects(enemy.hit_box, self.range, (self.x, self.y)):
-                    self.state = True
                     if self.archer_count == len(self.attack_imgs) - 1:
                         enemy_closest.append(enemy)
                         if not self.splash:
@@ -56,8 +55,7 @@ class Tower(pygame.sprite.Sprite):
                                 enemies.remove(enemy)
                             self.archer_count = 0
             if not enemy_closest:
-                self.state = False
-
+                self.is_attack = False
             if self.splash:
                 for enemy in enemy_closest:
                     if enemy.hit(self.damage):
@@ -67,8 +65,8 @@ class Tower(pygame.sprite.Sprite):
     def update(self, enemies):
         for enemy in enemies:
             if intersects(enemy.hit_box, self.range, (self.x, self.y)):
-                self.state = True
-        if self.state:
+                self.is_attack = True
+        if self.is_attack:
             self.image = self.attack_imgs[self.archer_count]
             self.archer_count = (self.archer_count + 1) % len(self.attack_imgs)
         else:

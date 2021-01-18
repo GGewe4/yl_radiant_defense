@@ -92,7 +92,7 @@ class Enemy(pygame.sprite.Sprite):
         health_bar = round(move_by * self.health)
         pygame.draw.rect(win, (255, 0, 0), (self.x + 15, self.y, length, 7), 0)
         pygame.draw.rect(win, (0, 255, 0), (self.x + 15, self.y, health_bar, 7), 0)
-        pygame.draw.rect(win, (255, 255, 255), self.hit_box, 5)
+        # pygame.draw.rect(win, (255, 255, 255), self.hit_box, 5)
 
 
 def load_image(name, colorkey=None):

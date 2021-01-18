@@ -20,7 +20,6 @@ class Group:
 
     def update(self, enemies):
         from game import LEVEL
-        global LEVEL
         pygame.time.set_timer(NEW_ENEMY, self.delay)
         if self.cur_enemy < self.count:
             self.cur_enemy += 1

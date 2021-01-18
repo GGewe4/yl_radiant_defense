@@ -27,3 +27,5 @@ class Golem(Enemy):
         self.delta_y = 10
         self.min_x = 40
         self.min_y = 10
+
+        self.health = self.max_health = 50

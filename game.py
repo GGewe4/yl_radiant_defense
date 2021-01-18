@@ -23,7 +23,7 @@ waves = [
     [0, 5, 3500],
     [1, 3, 4000],
     [2, 3, 2000],
-    [0, 2, 3000]]
+    [0, 10, 1000]]
 
 # [0, 50, 0, 1],
 # [0, 100, 0],
@@ -41,6 +41,7 @@ LEVEL = 1
 class Game:
     def __init__(self, wind, level=1):
         global LEVEL
+        self.timers = [NEW_WAVE, NEW_ENEMY]
         self.wind = wind
         self.width = 1280  # 1600 900, 16/9
         self.height = 720
@@ -71,7 +72,6 @@ class Game:
             self.c += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False
                     sys.exit()
                 pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -110,12 +110,14 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         self.enemies = []
                         self.towers = []
-                        towers_sprites.remove(towers_sprites)
-                        enemies_sprites.remove(enemies_sprites)
+                        towers_sprites.empty()
+                        enemies_sprites.empty()
                         run = False
+                        for timer in self.timers:
+                            pygame.time.set_timer(timer, 0)
             self.draw()
             clock.tick(120)
-        print(self.clicks)
+        # print(self.clicks)
 
     def draw(self):
         self.wind.blit(self.backg, (0, 0))
@@ -125,13 +127,13 @@ class Game:
         if self.c % 8 == 0:
             towers_sprites.update(self.enemies)
         for t in self.towers:
-            t.draw_radius(self.wind)
+            # t.draw_radius(self.wind)
             t.attack(self.enemies)
         towers_sprites.draw(self.wind)
         for em in self.enemies:
             # pygame.draw.circle(self.wind, (0, 255, 0), (em.hit_box.x + em.hit_box.width // 2,
             # em.hit_box.y + em.hit_box.height // 2), 5)
             em.new_move(self.wind)
-        for p in self.clicks:
-            pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
+        # for p in self.clicks:
+        #     pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
         pygame.display.update()
