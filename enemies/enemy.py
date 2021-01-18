@@ -1,6 +1,6 @@
-import pygame
 import os
-import sys
+
+import pygame
 
 DIR_LEVELS = 'levels'
 enemies_sprites = pygame.sprite.Group()
@@ -55,8 +55,11 @@ class Enemy(pygame.sprite.Sprite):
     def new_move(self, wind):
         self.x += self.vel_x
         self.y += self.vel_y
-        self.rect = pygame.Rect(self.x, self.y, self.image.get_width() - 20, self.image.get_height())
-        self.hit_box = pygame.Rect(self.x + self.delta_x, self.y + self.delta_y, self.image.get_width() - self.min_x, self.image.get_height() - self.min_y)
+        self.rect = pygame.Rect(self.x, self.y, self.image.get_width() - 20,
+                                self.image.get_height())
+        self.hit_box = pygame.Rect(self.x + self.delta_x, self.y + self.delta_y,
+                                   self.image.get_width() - self.min_x,
+                                   self.image.get_height() - self.min_y)
         # print(self.x, self.y, '    |    ', self.x2, self.y2)
         self.draw_health_bar(wind)
         if abs(self.x - self.x2) <= self.vel * 2 and abs(self.y - self.y2) <= self.vel * 2:

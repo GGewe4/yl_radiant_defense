@@ -1,6 +1,6 @@
 import pygame
+
 from enemies.enemy import Enemy, load_image
-import os
 
 
 class Satyr(Enemy):
@@ -12,8 +12,8 @@ class Satyr(Enemy):
         imgs.append(pygame.transform.scale(load_image(
             f"data/enemies/satyr/Walking/Satyr_03_Walking_0" + add_str + ".png"), (80, 65)))
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, level_path=1):
+        super().__init__(level_path)
         self.frames = Satyr.imgs[:]
         self.cur_frame = 0
         self.state = 0  # 0 if walking, 1 if dying

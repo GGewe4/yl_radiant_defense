@@ -1,6 +1,4 @@
 import pygame
-import os
-import math
 
 from towers.tower import Tower, load_image
 

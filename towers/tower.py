@@ -1,6 +1,6 @@
-import pygame
 import os
-import math
+
+import pygame
 
 towers_sprites = pygame.sprite.Group()
 

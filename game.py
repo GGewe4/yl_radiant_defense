@@ -1,19 +1,19 @@
+import os
 import sys
 
 import pygame
-import time
-import random
+
 from audio import GMusic
+from enemies.enemy import enemies_sprites
+from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
+from towers.archer_tower import ArcherTower
+from towers.magic_tower import MagicTower
+from towers.power import PowerTower
 # from enemies.minotaur import Minotaur
 # from enemies.golem import Golem
 # from enemies.wraith import Wraith
 # from enemies.satyr import Satyr
 from towers.tower import towers_sprites
-from towers.magic_tower import MagicTower
-from enemies.enemy import enemies_sprites
-from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
-from towers.archer_tower import ArcherTower
-import os
 
 #  [(856, 19), (820, 131), (670, 153), (439, 157), (342, 209),
 #  (302, 266), (336, 321), (380, 389), (360, 455),
@@ -25,7 +25,6 @@ waves = [
     [2, 3, 2000],
     [0, 2, 3000]]
 
-
 # [0, 50, 0, 1],
 # [0, 100, 0],
 # [20, 100, 0],
@@ -36,9 +35,12 @@ waves = [
 # [20, 0, 150],
 # [200, 100, 200],
 
+LEVEL = 1
+
 
 class Game:
-    def __init__(self, wind):
+    def __init__(self, wind, level=1):
+        global LEVEL
         self.wind = wind
         self.width = 1280  # 1600 900, 16/9
         self.height = 720
@@ -58,6 +60,9 @@ class Game:
         self.wave = 0
         self.current_wave = waves[self.wave][:]
 
+        self.level = level
+        LEVEL = self.level
+
     def run(self):
         run = True
         clock = pygame.time.Clock()
@@ -68,15 +73,16 @@ class Game:
                 if event.type == pygame.QUIT:
                     run = False
                     sys.exit()
-
                 pos = pygame.mouse.get_pos()
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.towers.append(ArcherTower(*pos))
+                        self.towers.append(PowerTower(*pos))
                         self.clicks.append(pos)
                     elif event.button == 3:
                         self.towers.append(MagicTower(*pos))
+                        self.clicks.append(pos)
+                    elif event.button == 2:
+                        self.towers.append(ArcherTower(*pos))
                         self.clicks.append(pos)
 
                 if event.type == NEW_ENEMY:
@@ -99,6 +105,14 @@ class Game:
                         self.mus.play_m('gelik')
                     elif event.key == pygame.K_m:
                         self.mus.play_m('zihte')
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.enemies = []
+                        self.towers = []
+                        towers_sprites.remove(towers_sprites)
+                        enemies_sprites.remove(enemies_sprites)
+                        run = False
             self.draw()
             clock.tick(120)
         print(self.clicks)
