@@ -26,3 +26,6 @@ class MagicTower(Tower):
                                    self.y - self.image.get_width() // 2 - 60)
         self.range = 100
         self.splash = True
+
+        self.sell_price = [250, 700, 1000]
+        self.price = [250, 700, 1000]

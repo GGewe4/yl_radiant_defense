@@ -25,5 +25,8 @@ class CrossbowTower(Tower):
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_height())
         self.rect = self.rect.move(self.x - self.image.get_width() // 2,
                                    self.y - self.image.get_width() // 2 - 90)
-        self.range = 150
+        self.range = 200
         self.splash = False
+
+        self.sell_price = [150, 300, 500]
+        self.price = [150, 300, 500]

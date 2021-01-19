@@ -9,6 +9,8 @@ from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
 from towers.archer_tower import ArcherTower
 from towers.magic_tower import MagicTower
 from towers.power import PowerTower
+
+PAUSE_TIME = pygame.USEREVENT + 3
 # from enemies.minotaur import Minotaur
 # from enemies.golem import Golem
 # from enemies.wraith import Wraith
@@ -60,15 +62,22 @@ class Game:
 
         self.wave = 0
         self.current_wave = waves[self.wave][:]
+        self.delay = 0
 
         self.level = level
+        self.paused = True
         LEVEL = self.level
 
+        self.lives = 1
+        self.money = 250
+
     def run(self):
-        run = True
+        self.run = True
         clock = pygame.time.Clock()
         group = Group(*self.current_wave)
-        while run:
+        self.wind.blit(self.backg, (0, 0))
+        pygame.display.update()
+        while self.run:
             self.c += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -76,19 +85,41 @@ class Game:
                 pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.towers.append(PowerTower(*pos))
+                        tower = PowerTower(*pos)
+                        if self.money >= tower.price[tower.level]:
+                            tower = PowerTower(*pos)
+                            self.money -= tower.price[tower.level]
+                            self.towers.append(tower)
+                        else:
+                            towers_sprites.remove(tower)
                         self.clicks.append(pos)
                     elif event.button == 3:
-                        self.towers.append(MagicTower(*pos))
+                        tower = ArcherTower(*pos)
+                        if self.money >= tower.price[tower.level]:
+                            tower = ArcherTower(*pos)
+                            self.money -= tower.price[tower.level]
+                            self.towers.append(tower)
+                        else:
+                            towers_sprites.remove(tower)
                         self.clicks.append(pos)
                     elif event.button == 2:
-                        self.towers.append(ArcherTower(*pos))
+                        tower = MagicTower(*pos)
+                        if self.money >= tower.price[tower.level]:
+                            tower = MagicTower(*pos)
+                            self.money -= tower.price[tower.level]
+                            self.towers.append(tower)
+                        else:
+                            towers_sprites.remove(tower)
                         self.clicks.append(pos)
 
-                if event.type == NEW_ENEMY:
+                if event.type == NEW_ENEMY and not self.paused:
+                    t = group.delay
+                    group.delay += self.delay
                     group.update(self.enemies)
+                    group.delay = t
+                    self.delay = 0
 
-                if event.type == NEW_WAVE:
+                if event.type == NEW_WAVE and not self.paused:
                     self.wave += 1
                     if self.wave < len(waves):
                         self.current_wave = waves[self.wave][:]
@@ -105,6 +136,8 @@ class Game:
                         self.mus.play_m('gelik')
                     elif event.key == pygame.K_m:
                         self.mus.play_m('zihte')
+                    elif event.key == pygame.K_LSHIFT:
+                        self.paused = not self.paused
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -112,14 +145,19 @@ class Game:
                         self.towers = []
                         towers_sprites.empty()
                         enemies_sprites.empty()
-                        run = False
+                        self.run = False
                         for timer in self.timers:
                             pygame.time.set_timer(timer, 0)
-            self.draw()
+            if not self.paused:
+                self.draw()
+                self.delay = 0
+            else:
+                self.delay += 1000 // 120
             clock.tick(120)
-        # print(self.clicks)
+            print(self.money, self.lives)
 
     def draw(self):
+        self.del_enemies = []
         self.wind.blit(self.backg, (0, 0))
         enemies_sprites.draw(self.wind)
         if self.c % 6 == 0:
@@ -130,10 +168,25 @@ class Game:
             # t.draw_radius(self.wind)
             t.attack(self.enemies)
         towers_sprites.draw(self.wind)
-        for em in self.enemies:
-            # pygame.draw.circle(self.wind, (0, 255, 0), (em.hit_box.x + em.hit_box.width // 2,
-            # em.hit_box.y + em.hit_box.height // 2), 5)
-            em.new_move(self.wind)
+        for en in self.enemies:
+            # pygame.draw.circle(self.wind, (0, 255, 0), (en.hit_box.x + en.hit_box.width // 2,
+            # en.hit_box.y + en.hit_box.height // 2), 5)
+            if en.new_move(self.wind):
+                self.lives -= 1
+                if self.lives <= 0:
+                    self.paused = True
+                #     self.run = False
+                #     self.enemies = []
+                #     self.towers = []
+                #     towers_sprites.empty()
+                #     enemies_sprites.empty()
+                #     for timer in self.timers:
+                #         pygame.time.set_timer(timer, 0)
+                self.del_enemies.append(en)
+        for en in self.del_enemies:
+            enemies_sprites.remove(en)
+            self.enemies.remove(en)
+
         # for p in self.clicks:
         #     pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
         pygame.display.update()

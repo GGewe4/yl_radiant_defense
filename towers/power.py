@@ -28,3 +28,6 @@ class PowerTower(Tower):
                                    self.y - self.image.get_width() // 2 - 90)
         self.range = 250
         self.splash = False
+
+        self.sell_price = [200, 500, 700]
+        self.price = [200, 500, 700]

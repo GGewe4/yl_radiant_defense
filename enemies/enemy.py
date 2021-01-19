@@ -21,7 +21,7 @@ class Enemy(pygame.sprite.Sprite):
         self.y = self.path[0][1]
         self.vel_x = 0
         self.vel_y = 0
-        self.vel = 20 / 120
+        self.vel = 150 / 120
 
         self.dis = 0
         self.path_pos = 0
@@ -63,14 +63,17 @@ class Enemy(pygame.sprite.Sprite):
         # print(self.x, self.y, '    |    ', self.x2, self.y2)
         self.draw_health_bar(wind)
         if abs(self.x - self.x2) <= self.vel * 2 and abs(self.y - self.y2) <= self.vel * 2:
-            self.change_vel()
+            return self.change_vel()
 
     def change_vel(self):
+        f = False
         x1, y1 = self.path[min(self.path_pos, len(self.path) - 1)]
         if self.path_pos + 1 >= len(self.path):
             x2, y2 = (609, 800)
         else:
             x2, y2 = self.path[self.path_pos + 1]
+        if self.path_pos + 1 == len(self.path):
+            f = True
         distance = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
         self.vel_x = (x2 - x1) / (distance / self.vel)
         self.vel_y = (y2 - y1) / (distance / self.vel)
@@ -85,14 +88,15 @@ class Enemy(pygame.sprite.Sprite):
         self.x2 = x2
         self.y2 = y2
         self.path_pos += 1
+        return f
 
-    def draw_health_bar(self, win):
+    def draw_health_bar(self, wind):
         length = 50
         move_by = length / self.max_health
         health_bar = round(move_by * self.health)
-        pygame.draw.rect(win, (255, 0, 0), (self.x + 15, self.y, length, 7), 0)
-        pygame.draw.rect(win, (0, 255, 0), (self.x + 15, self.y, health_bar, 7), 0)
-        # pygame.draw.rect(win, (255, 255, 255), self.hit_box, 5)
+        pygame.draw.rect(wind, (255, 0, 0), (self.x + 15, self.y, length, 7), 0)
+        pygame.draw.rect(wind, (0, 255, 0), (self.x + 15, self.y, health_bar, 7), 0)
+        # pygame.draw.rect(wind, (255, 255, 255), self.hit_box, 5)
 
 
 def load_image(name, colorkey=None):
