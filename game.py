@@ -13,6 +13,8 @@ from towers.magic_tower import MagicTower
 from towers.power import PowerTower
 from towers.tower import towers_sprites
 
+from levels_configs import LVL1_TOWERS
+
 PAUSE_TIME = pygame.USEREVENT + 3
 # from enemies.minotaur import Minotaur
 # from enemies.golem import Golem
@@ -71,7 +73,6 @@ class Game:
 
         self.level = level
         self.paused = True
-        self.select = False
         LEVEL = self.level
 
         self.lives = 1
@@ -80,11 +81,14 @@ class Game:
         self.game_bar = GameBar()
         self.running = True
 
+        self.t_points = LVL1_TOWERS
+        self.select = False
+
     def run(self):
         clock = pygame.time.Clock()
         group = Group(*self.current_wave)
         self.wind.blit(self.backg, (0, 0))
-        self.game_bar.draw(self.wind)
+        # self.game_bar.draw(self.wind)
         pygame.display.update()
         while self.running:
             self.c += 1
@@ -95,44 +99,69 @@ class Game:
                 pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN and not self.paused:
                     if event.button == 1:
-                        type_tower = self.game_bar.collide(*pos)
-                        if type_tower:
-                            self.select = True
-                            self.selected_tower = type_tower
-                        elif not type_tower and self.select:
-                            if self.selected_tower == 1:
-                                tower = ArcherTower(*pos)
-                                if self.money >= tower.price[tower.level]:
-                                    self.money -= tower.price[tower.level]
-                                    self.towers.append(tower)
+                        if not self.game_bar.showing:
+                            for p in range(1, 12):
+                                x1, y1 = pos
+                                x2, y2 = self.t_points[str(p)][0]
+                                if x1 in range(x2 - 20, x2 + 20) and y1 in range(y2 - 20, y2 + 20):
+                                    self.cur_pos = p
+                                    if self.t_points[str(self.cur_pos)][1] == 0:
+                                        self.game_bar.showing = True
+                                        break
+                                    else:
+                                        self.select = True
+                                    break
                                 else:
-                                    towers_sprites.remove(tower)
-                                self.clicks.append(pos)
-                            elif self.selected_tower == 2:
-                                tower = CrossbowTower(*pos)
-                                if self.money >= tower.price[tower.level]:
-                                    self.money -= tower.price[tower.level]
-                                    self.towers.append(tower)
-                                else:
-                                    towers_sprites.remove(tower)
-                                self.clicks.append(pos)
-                            elif self.selected_tower == 3:
-                                tower = PowerTower(*pos)
-                                if self.money >= tower.price[tower.level]:
-                                    self.money -= tower.price[tower.level]
-                                    self.towers.append(tower)
-                                else:
-                                    towers_sprites.remove(tower)
-                                self.clicks.append(pos)
-                            elif self.selected_tower == 4:
-                                tower = MagicTower(*pos)
-                                if self.money >= tower.price[tower.level]:
-                                    self.money -= tower.price[tower.level]
-                                    self.towers.append(tower)
-                                else:
-                                    towers_sprites.remove(tower)
-                                self.clicks.append(pos)
-
+                                    for tower in self.towers:
+                                        tower.selected = False
+                                    self.cur_pos = 0
+                        elif self.game_bar.showing:
+                            type_tower = self.game_bar.collide(*pos)
+                            if type_tower:
+                                self.selected_tower = type_tower
+                                self.game_bar.showing = False
+                                if self.selected_tower == 1:
+                                    tower = ArcherTower(*self.t_points[str(self.cur_pos)][0])
+                                    if self.money >= tower.price[tower.level]:
+                                        self.money -= tower.price[tower.level]
+                                        self.towers.append(tower)
+                                        self.t_points[str(self.cur_pos)][1] = 1
+                                    else:
+                                        towers_sprites.remove(tower)
+                                    self.clicks.append(pos)
+                                elif self.selected_tower == 2:
+                                    tower = CrossbowTower(*self.t_points[str(self.cur_pos)][0])
+                                    if self.money >= tower.price[tower.level]:
+                                        self.money -= tower.price[tower.level]
+                                        self.towers.append(tower)
+                                        self.t_points[str(self.cur_pos)][1] = 1
+                                    else:
+                                        towers_sprites.remove(tower)
+                                    self.clicks.append(pos)
+                                elif self.selected_tower == 3:
+                                    tower = PowerTower(*self.t_points[str(self.cur_pos)][0])
+                                    if self.money >= tower.price[tower.level]:
+                                        self.money -= tower.price[tower.level]
+                                        self.towers.append(tower)
+                                        self.t_points[str(self.cur_pos)][1] = 1
+                                    else:
+                                        towers_sprites.remove(tower)
+                                    self.clicks.append(pos)
+                                elif self.selected_tower == 4:
+                                    tower = MagicTower(*self.t_points[str(self.cur_pos)][0])
+                                    if self.money >= tower.price[tower.level]:
+                                        self.money -= tower.price[tower.level]
+                                        self.towers.append(tower)
+                                        self.t_points[str(self.cur_pos)][1] = 1
+                                    else:
+                                        towers_sprites.remove(tower)
+                                    self.clicks.append(pos)
+                            else:
+                                self.game_bar.showing = False
+                        elif self.select and not self.game_bar.showing:
+                            for tower in self.towers:
+                                if tower.collide(*pos, self.wind):
+                                    tower.selected = True
                 if event.type == NEW_ENEMY and not self.paused:
                     t = group.delay
                     group.delay += self.delay
@@ -188,6 +217,8 @@ class Game:
             towers_sprites.update(self.enemies)
         for t in self.towers:
             # t.draw_radius(self.wind)
+            if t.selected:
+                t.draw_radius(self.wind)
             self.money += t.attack(self.enemies)
         towers_sprites.draw(self.wind)
         for en in self.enemies:

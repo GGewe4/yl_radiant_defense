@@ -28,7 +28,7 @@ class Tower(pygame.sprite.Sprite):
         self.sell_price = [0, 0, 0]
         self.price = [0, 0, 0]
         self.level = 0
-        self.selected = False
+        self.selected = True
         self.main_img = None
         self.damage = 1
         self.range = 0
@@ -80,6 +80,10 @@ class Tower(pygame.sprite.Sprite):
         surface = pygame.Surface((self.range * 2, self.range * 2), pygame.SRCALPHA)
         pygame.draw.circle(surface, (128, 128, 128, 120), (self.range, self.range), self.range, 0)
         win.blit(surface, (self.x - self.range, self.y - self.range))
+
+    def collide(self, x, y, wind):
+        print(self.x, self.y)
+        return self.x <= x <= self.image.get_width() and self.y <= y <= self.image.get_height()
 
 
 def load_image(name, colorkey=None):

@@ -7,9 +7,11 @@ class GameBar:
                                           (96, 480)).convert_alpha()
         self.x = 1170
         self.y = 20
+        self.showing = False
 
     def draw(self, wind):
-        wind.blit(self.img, (self.x, self.y))
+        if self.showing:
+            wind.blit(self.img, (self.x, self.y))
 
     def collide(self, x, y):
         if 1183 <= x <= 1252:
