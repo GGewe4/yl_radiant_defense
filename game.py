@@ -6,16 +6,19 @@ import pygame
 from audio import GMusic
 from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
+from game_menu import GameBar
 from towers.archer_tower import ArcherTower
+from towers.crossbow import CrossbowTower
 from towers.magic_tower import MagicTower
 from towers.power import PowerTower
+from towers.tower import towers_sprites
 
 PAUSE_TIME = pygame.USEREVENT + 3
 # from enemies.minotaur import Minotaur
 # from enemies.golem import Golem
 # from enemies.wraith import Wraith
 # from enemies.satyr import Satyr
-from towers.tower import towers_sprites
+
 
 #  [(856, 19), (820, 131), (670, 153), (439, 157), (342, 209),
 #  (302, 266), (336, 321), (380, 389), (360, 455),
@@ -55,6 +58,7 @@ class Game:
             self.circ = eval(''.join(file.readlines()))
         self.enemies = []
         self.towers = []
+        self.del_enemies = []
         self.c = 0  # animation count
 
         self.mus = GMusic()
@@ -63,54 +67,71 @@ class Game:
         self.wave = 0
         self.current_wave = waves[self.wave][:]
         self.delay = 0
+        self.selected_tower = 0
 
         self.level = level
         self.paused = True
+        self.select = False
         LEVEL = self.level
 
         self.lives = 1
-        self.money = 250
+        self.money = 5000
+
+        self.game_bar = GameBar()
+        self.running = True
 
     def run(self):
-        self.run = True
         clock = pygame.time.Clock()
         group = Group(*self.current_wave)
         self.wind.blit(self.backg, (0, 0))
+        self.game_bar.draw(self.wind)
         pygame.display.update()
-        while self.run:
+        while self.running:
             self.c += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    print(self.clicks)
                     sys.exit()
                 pos = pygame.mouse.get_pos()
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and not self.paused:
                     if event.button == 1:
-                        tower = PowerTower(*pos)
-                        if self.money >= tower.price[tower.level]:
-                            tower = PowerTower(*pos)
-                            self.money -= tower.price[tower.level]
-                            self.towers.append(tower)
-                        else:
-                            towers_sprites.remove(tower)
-                        self.clicks.append(pos)
-                    elif event.button == 3:
-                        tower = ArcherTower(*pos)
-                        if self.money >= tower.price[tower.level]:
-                            tower = ArcherTower(*pos)
-                            self.money -= tower.price[tower.level]
-                            self.towers.append(tower)
-                        else:
-                            towers_sprites.remove(tower)
-                        self.clicks.append(pos)
-                    elif event.button == 2:
-                        tower = MagicTower(*pos)
-                        if self.money >= tower.price[tower.level]:
-                            tower = MagicTower(*pos)
-                            self.money -= tower.price[tower.level]
-                            self.towers.append(tower)
-                        else:
-                            towers_sprites.remove(tower)
-                        self.clicks.append(pos)
+                        type_tower = self.game_bar.collide(*pos)
+                        if type_tower:
+                            self.select = True
+                            self.selected_tower = type_tower
+                        elif not type_tower and self.select:
+                            if self.selected_tower == 1:
+                                tower = ArcherTower(*pos)
+                                if self.money >= tower.price[tower.level]:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                else:
+                                    towers_sprites.remove(tower)
+                                self.clicks.append(pos)
+                            elif self.selected_tower == 2:
+                                tower = CrossbowTower(*pos)
+                                if self.money >= tower.price[tower.level]:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                else:
+                                    towers_sprites.remove(tower)
+                                self.clicks.append(pos)
+                            elif self.selected_tower == 3:
+                                tower = PowerTower(*pos)
+                                if self.money >= tower.price[tower.level]:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                else:
+                                    towers_sprites.remove(tower)
+                                self.clicks.append(pos)
+                            elif self.selected_tower == 4:
+                                tower = MagicTower(*pos)
+                                if self.money >= tower.price[tower.level]:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                else:
+                                    towers_sprites.remove(tower)
+                                self.clicks.append(pos)
 
                 if event.type == NEW_ENEMY and not self.paused:
                     t = group.delay
@@ -145,7 +166,7 @@ class Game:
                         self.towers = []
                         towers_sprites.empty()
                         enemies_sprites.empty()
-                        self.run = False
+                        self.running = False
                         for timer in self.timers:
                             pygame.time.set_timer(timer, 0)
             if not self.paused:
@@ -159,6 +180,7 @@ class Game:
     def draw(self):
         self.del_enemies = []
         self.wind.blit(self.backg, (0, 0))
+        self.game_bar.draw(self.wind)
         enemies_sprites.draw(self.wind)
         if self.c % 6 == 0:
             enemies_sprites.update()
@@ -166,7 +188,7 @@ class Game:
             towers_sprites.update(self.enemies)
         for t in self.towers:
             # t.draw_radius(self.wind)
-            t.attack(self.enemies)
+            self.money += t.attack(self.enemies)
         towers_sprites.draw(self.wind)
         for en in self.enemies:
             # pygame.draw.circle(self.wind, (0, 255, 0), (en.hit_box.x + en.hit_box.width // 2,
@@ -186,7 +208,6 @@ class Game:
         for en in self.del_enemies:
             enemies_sprites.remove(en)
             self.enemies.remove(en)
-
         # for p in self.clicks:
         #     pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
         pygame.display.update()

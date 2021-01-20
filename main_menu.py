@@ -1,5 +1,4 @@
 import sys
-
 import pygame
 
 from audio import GMusic
@@ -84,7 +83,6 @@ class MainMenu:
                             sys.exit()
 
             self.draw()
-
         pygame.quit()
 
     def draw(self):

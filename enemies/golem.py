@@ -28,4 +28,4 @@ class Golem(Enemy):
         self.min_x = 40
         self.min_y = 10
 
-        self.health = self.max_health = 50
+        self.health = self.max_health = 20

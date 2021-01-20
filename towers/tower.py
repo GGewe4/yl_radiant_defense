@@ -44,6 +44,7 @@ class Tower(pygame.sprite.Sprite):
         pass
 
     def attack(self, enemies):
+        add_money = 0
         if self.is_attack:
             enemy_closest = []
             for enemy in enemies:
@@ -52,6 +53,7 @@ class Tower(pygame.sprite.Sprite):
                         enemy_closest.append(enemy)
                         if not self.splash:
                             if enemy.hit(self.damage):
+                                add_money += enemy.money_for_kill
                                 enemies.remove(enemy)
                             self.archer_count = 0
             if not enemy_closest:
@@ -59,8 +61,10 @@ class Tower(pygame.sprite.Sprite):
             if self.splash:
                 for enemy in enemy_closest:
                     if enemy.hit(self.damage):
+                        add_money += enemy.money_for_kill
                         enemies.remove(enemy)
                     self.archer_count = 0
+        return add_money
 
     def update(self, enemies):
         for enemy in enemies:

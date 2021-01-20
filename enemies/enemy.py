@@ -21,7 +21,8 @@ class Enemy(pygame.sprite.Sprite):
         self.y = self.path[0][1]
         self.vel_x = 0
         self.vel_y = 0
-        self.vel = 150 / 120
+        self.vel = 20 / 120
+        self.money_for_kill = 40
 
         self.dis = 0
         self.path_pos = 0
@@ -33,6 +34,9 @@ class Enemy(pygame.sprite.Sprite):
         self.delta_y = 0
         self.min_x = 0
         self.min_y = 0
+
+        self.x2 = self.x
+        self.y2 = self.y
 
     def draw(self):
         pass
@@ -47,8 +51,6 @@ class Enemy(pygame.sprite.Sprite):
             return True
 
     def update(self):
-        clock = pygame.time.Clock()
-        # clock.tick(30)
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
 
