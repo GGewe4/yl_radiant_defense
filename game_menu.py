@@ -3,8 +3,12 @@ import pygame
 
 class GameBar:
     def __init__(self):
-        self.img = pygame.transform.scale(pygame.image.load('data/game_bar.png'),
+        self.img = pygame.transform.scale(pygame.image.load('data/ui/game_bar.png'),
                                           (96, 480)).convert_alpha()
+        self.heart = pygame.transform.scale(pygame.image.load('data/ui/heart.png'),
+                                            (80, 80)).convert_alpha()
+        self.coins = pygame.transform.scale(pygame.image.load('data/ui/coins.png'),
+                                            (80, 80)).convert_alpha()
         self.x = 1170
         self.y = 20
         self.showing = False
@@ -12,6 +16,8 @@ class GameBar:
     def draw(self, wind):
         if self.showing:
             wind.blit(self.img, (self.x, self.y))
+        wind.blit(self.heart, (30, 10))
+        wind.blit(self.coins, (30, 90))
 
     def collide(self, x, y):
         if 1183 <= x <= 1252:

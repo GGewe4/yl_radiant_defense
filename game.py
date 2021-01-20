@@ -32,16 +32,6 @@ waves = [
     [2, 3, 2000],
     [0, 10, 1000]]
 
-# [0, 50, 0, 1],
-# [0, 100, 0],
-# [20, 100, 0],
-# [50, 100, 0],
-# [100, 100, 0],
-# [0, 0, 50, 3],
-# [20, 0, 100],
-# [20, 0, 150],
-# [200, 100, 200],
-
 LEVEL = 1
 
 
@@ -52,7 +42,7 @@ class Game:
         self.wind = wind
         self.width = 1280  # 1600 900, 16/9
         self.height = 720
-        self.backg = pygame.image.load("data/bg_test5.png")
+        self.backg = pygame.image.load("data/ui/bg_test5.png")
         self.backg = pygame.transform.scale(self.backg, (self.width, self.height))
         self.clicks = []  # delete
         self.circ = []
@@ -82,7 +72,6 @@ class Game:
         self.running = True
 
         self.t_points = LVL1_TOWERS
-        self.select = False
 
     def run(self):
         clock = pygame.time.Clock()
@@ -99,23 +88,8 @@ class Game:
                 pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN and not self.paused:
                     if event.button == 1:
-                        if not self.game_bar.showing:
-                            for p in range(1, 12):
-                                x1, y1 = pos
-                                x2, y2 = self.t_points[str(p)][0]
-                                if x1 in range(x2 - 20, x2 + 20) and y1 in range(y2 - 20, y2 + 20):
-                                    self.cur_pos = p
-                                    if self.t_points[str(self.cur_pos)][1] == 0:
-                                        self.game_bar.showing = True
-                                        break
-                                    else:
-                                        self.select = True
-                                    break
-                                else:
-                                    for tower in self.towers:
-                                        tower.selected = False
-                                    self.cur_pos = 0
-                        elif self.game_bar.showing:
+
+                        if self.game_bar.showing:
                             type_tower = self.game_bar.collide(*pos)
                             if type_tower:
                                 self.selected_tower = type_tower
@@ -158,10 +132,25 @@ class Game:
                                     self.clicks.append(pos)
                             else:
                                 self.game_bar.showing = False
-                        elif self.select and not self.game_bar.showing:
+
+                        else:
                             for tower in self.towers:
-                                if tower.collide(*pos, self.wind):
+                                tower.selected = False
+
+                            for p in range(1, 12):
+                                x1, y1 = pos
+                                x2, y2 = self.t_points[str(p)][0]
+                                if x1 in range(x2 - 20, x2 + 20) and y1 in range(y2 - 20, y2 + 20):
+                                    self.cur_pos = p
+                                    if self.t_points[str(self.cur_pos)][1] == 0:
+                                        self.game_bar.showing = True
+                                        break
+
+                            for tower in self.towers:
+                                if tower.collide(self.wind, *pos):
                                     tower.selected = True
+                                    break
+
                 if event.type == NEW_ENEMY and not self.paused:
                     t = group.delay
                     group.delay += self.delay
@@ -204,7 +193,7 @@ class Game:
             else:
                 self.delay += 1000 // 120
             clock.tick(120)
-            print(self.money, self.lives)
+            # print(self.money, self.lives)
 
     def draw(self):
         self.del_enemies = []
@@ -216,7 +205,7 @@ class Game:
         if self.c % 8 == 0:
             towers_sprites.update(self.enemies)
         for t in self.towers:
-            # t.draw_radius(self.wind)
+            t.collide(self.wind, 0, 0)
             if t.selected:
                 t.draw_radius(self.wind)
             self.money += t.attack(self.enemies)

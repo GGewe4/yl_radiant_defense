@@ -10,7 +10,7 @@ class MainMenu:
         self.width = 1280
         self.height = 720
 
-        self.bgr = pygame.image.load("data/mt2.jpg")
+        self.bgr = pygame.image.load("data/ui/mt2.jpg")
         self.bgr = pygame.transform.scale(self.bgr, (self.width, self.height))
         self.wind = wind
 
@@ -22,13 +22,13 @@ class MainMenu:
         self.m_x = 0
         self.m_y = 0
 
-        self.m_icon = pygame.image.load("data/mus_icon.jpg")
+        self.m_icon = pygame.image.load("data/ui/mus_icon.jpg")
 
-        self.krest = pygame.image.load("data/krest.png")
+        self.krest = pygame.image.load("data/ui/krest.png")
         self.krest = self.krest.convert_alpha()
         self.krest = pygame.transform.scale(self.krest, (58, 60))
 
-        self.triangle = pygame.image.load("data/cht.png")
+        self.triangle = pygame.image.load("data/ui/cht.png")
         self.triangle = self.triangle.convert_alpha()
         self.triangle = pygame.transform.scale(self.triangle, (75, 75))
 
