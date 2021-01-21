@@ -21,7 +21,7 @@ class Enemy(pygame.sprite.Sprite):
         self.y = self.path[0][1]
         self.vel_x = 0
         self.vel_y = 0
-        self.vel = 20 / 120
+        self.vel = 100 / 120
         self.money_for_kill = 40
 
         self.dis = 0

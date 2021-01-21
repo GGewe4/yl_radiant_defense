@@ -7,15 +7,13 @@ from audio import GMusic
 from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
 from game_ui import GameBar
+from levels_configs import LVL1_TOWERS
 from towers.archer_tower import ArcherTower
 from towers.crossbow import CrossbowTower
 from towers.magic_tower import MagicTower
 from towers.power import PowerTower
 from towers.tower import towers_sprites
 
-from levels_configs import LVL1_TOWERS
-
-PAUSE_TIME = pygame.USEREVENT + 3
 # from enemies.minotaur import Minotaur
 # from enemies.golem import Golem
 # from enemies.wraith import Wraith
@@ -29,8 +27,9 @@ PAUSE_TIME = pygame.USEREVENT + 3
 waves = [
     [3, 5, 3500],
     [3, 3, 4000],
-    [2, 3, 2000],
-    [0, 10, 1000]]
+    [0, 0, 0]]
+# [2, 3, 2000],
+# [0, 10, 1000]]
 
 LEVEL = 1
 
@@ -43,6 +42,9 @@ class Game:
         self.width = 1280  # 1600 900, 16/9
         self.height = 720
         self.backg = pygame.image.load("data/ui/bg_test5.png")
+        self.win_img = pygame.transform.scale(pygame.image.load('data/ui/win_screen.png'),
+                                              (1280, 720))
+        self.lose_img = pygame.transform.scale(pygame.image.load('data/ui/lose.png'), (1280, 720))
         self.backg = pygame.transform.scale(self.backg, (self.width, self.height))
         self.clicks = []  # delete
         self.circ = []
@@ -65,13 +67,14 @@ class Game:
         self.paused = True
         LEVEL = self.level
 
-        self.lives = 20
+        self.lives = 1
         self.money = 5000
 
         self.game_bar = GameBar()
         self.running = True
 
         self.t_points = LVL1_TOWERS
+        self.wait = True
 
     def run(self):
         clock = pygame.time.Clock()
@@ -160,7 +163,7 @@ class Game:
 
                 if event.type == NEW_WAVE and not self.paused:
                     self.wave += 1
-                    if self.wave < len(waves):
+                    if self.wave + 1 < len(waves):
                         self.current_wave = waves[self.wave][:]
                         group = Group(*self.current_wave)
 
@@ -215,7 +218,7 @@ class Game:
             if en.new_move(self.wind):
                 self.lives -= 1
                 if self.lives <= 0:
-                    self.paused = True
+                    self.lose()
                 #     self.run = False
                 #     self.enemies = []
                 #     self.towers = []
@@ -224,6 +227,8 @@ class Game:
                 #     for timer in self.timers:
                 #         pygame.time.set_timer(timer, 0)
                 self.del_enemies.append(en)
+        if self.wave == len(waves) - 1 and not self.enemies:
+            self.win()
         for en in self.del_enemies:
             enemies_sprites.remove(en)
             self.enemies.remove(en)
@@ -232,3 +237,32 @@ class Game:
         # for circ in self.circ:
         #     pygame.draw.circle(self.wind, (255, 0, 0), circ, 5)
         pygame.display.update()
+
+    def win(self):
+        self.wind.blit(self.win_img, (0, 0))
+        pygame.display.update()
+        while self.wait:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.wait = False
+                    self.running = False
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.running = False
+                        self.wait = False
+
+    def lose(self):
+        self.wind.blit(self.lose_img, (0, 0))
+        pygame.display.update()
+        while self.wait:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.wait = False
+                    self.running = False
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.running = False
+                        self.wait = False
+
