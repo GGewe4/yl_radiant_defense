@@ -6,7 +6,7 @@ import pygame
 from audio import GMusic
 from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
-from game_menu import GameBar
+from game_ui import GameBar
 from towers.archer_tower import ArcherTower
 from towers.crossbow import CrossbowTower
 from towers.magic_tower import MagicTower
@@ -27,8 +27,8 @@ PAUSE_TIME = pygame.USEREVENT + 3
 #  (403, 505), (471, 528), (557, 522), (619, 570), (634, 702)]
 
 waves = [
-    [0, 5, 3500],
-    [1, 3, 4000],
+    [3, 5, 3500],
+    [3, 3, 4000],
     [2, 3, 2000],
     [0, 10, 1000]]
 
@@ -54,7 +54,7 @@ class Game:
         self.c = 0  # animation count
 
         self.mus = GMusic()
-        self.mus.play_m('gelik')
+        self.mus.play_m('1lvl')
 
         self.wave = 0
         self.current_wave = waves[self.wave][:]
@@ -65,7 +65,7 @@ class Game:
         self.paused = True
         LEVEL = self.level
 
-        self.lives = 1
+        self.lives = 20
         self.money = 5000
 
         self.game_bar = GameBar()
@@ -129,7 +129,6 @@ class Game:
                                         self.t_points[str(self.cur_pos)][1] = 1
                                     else:
                                         towers_sprites.remove(tower)
-                                    self.clicks.append(pos)
                             else:
                                 self.game_bar.showing = False
 
@@ -150,6 +149,7 @@ class Game:
                                 if tower.collide(self.wind, *pos):
                                     tower.selected = True
                                     break
+                    self.clicks.append(pos)
 
                 if event.type == NEW_ENEMY and not self.paused:
                     t = group.delay
@@ -193,12 +193,11 @@ class Game:
             else:
                 self.delay += 1000 // 120
             clock.tick(120)
-            # print(self.money, self.lives)
 
     def draw(self):
         self.del_enemies = []
         self.wind.blit(self.backg, (0, 0))
-        self.game_bar.draw(self.wind)
+        self.game_bar.draw(self.wind, self.lives, self.money)
         enemies_sprites.draw(self.wind)
         if self.c % 6 == 0:
             enemies_sprites.update()
@@ -230,4 +229,6 @@ class Game:
             self.enemies.remove(en)
         # for p in self.clicks:
         #     pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
+        # for circ in self.circ:
+        #     pygame.draw.circle(self.wind, (255, 0, 0), circ, 5)
         pygame.display.update()

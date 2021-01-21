@@ -9,13 +9,19 @@ class GameBar:
                                             (80, 80)).convert_alpha()
         self.coins = pygame.transform.scale(pygame.image.load('data/ui/coins.png'),
                                             (80, 80)).convert_alpha()
+        self.health = pygame.font.Font(None, 50)
+        self.money = pygame.font.Font(None, 50)
         self.x = 1170
         self.y = 20
         self.showing = False
 
-    def draw(self, wind):
+    def draw(self, wind, health, money):
         if self.showing:
             wind.blit(self.img, (self.x, self.y))
+        health = self.health.render(f"{health}", True, (255, 255, 255))
+        money = self.money.render(f"{money}", True, (255, 255, 255))
+        wind.blit(health, (115, 33))
+        wind.blit(money, (115, 113))
         wind.blit(self.heart, (30, 10))
         wind.blit(self.coins, (30, 90))
 
