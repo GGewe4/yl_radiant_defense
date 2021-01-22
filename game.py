@@ -1,6 +1,6 @@
 import os
 import sys
-
+import copy
 import pygame
 
 from audio import GMusic
@@ -73,7 +73,7 @@ class Game:
         self.game_bar = GameBar()
         self.running = True
 
-        self.t_points = LVL1_TOWERS
+        self.t_points = copy.deepcopy(LVL1_TOWERS)
         self.wait = True
 
     def run(self):
@@ -183,8 +183,8 @@ class Game:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        self.enemies = []
-                        self.towers = []
+                        # self.enemies = []
+                        # self.towers = []
                         towers_sprites.empty()
                         enemies_sprites.empty()
                         self.running = False
@@ -244,12 +244,15 @@ class Game:
         while self.wait:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.wait = False
-                    self.running = False
+                    sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
+                        towers_sprites.empty()
+                        enemies_sprites.empty()
                         self.running = False
+                        for timer in self.timers:
+                            pygame.time.set_timer(timer, 0)
                         self.wait = False
 
     def lose(self):
@@ -258,11 +261,14 @@ class Game:
         while self.wait:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.wait = False
-                    self.running = False
+                    sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
+                        towers_sprites.empty()
+                        enemies_sprites.empty()
                         self.running = False
+                        for timer in self.timers:
+                            pygame.time.set_timer(timer, 0)
                         self.wait = False
 
