@@ -22,7 +22,6 @@ class Group:
         from game import LEVEL
         pygame.time.set_timer(NEW_ENEMY, self.delay)
         if self.cur_enemy < self.count:
-            self.cur_enemy += 1
             if self.type == 0:
                 enemies.append(Golem(LEVEL))
             if self.type == 1:
@@ -31,6 +30,11 @@ class Group:
                 enemies.append(Minotaur(LEVEL))
             if self.type == 3:
                 enemies.append(Satyr(LEVEL))
+        self.cur_enemy += 1
         if self.count == self.cur_enemy:
             pygame.time.set_timer(NEW_WAVE, 15000)
-            self.cur_enemy = self.count + 1
+            pygame.time.set_timer(NEW_ENEMY, 0)
+            return True
+        return False
+
+

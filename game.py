@@ -1,6 +1,7 @@
+import copy
 import os
 import sys
-import copy
+
 import pygame
 
 from audio import GMusic
@@ -26,7 +27,7 @@ from towers.tower import towers_sprites
 
 waves = [
     [3, 5, 3500],
-    [3, 3, 4000],
+    [2, 3, 4000],
     [0, 0, 0]]
 # [2, 3, 2000],
 # [0, 10, 1000]]
@@ -76,6 +77,8 @@ class Game:
         self.t_points = copy.deepcopy(LVL1_TOWERS)
         self.wait = True
 
+        self.ready_to_next_wave = False
+
     def run(self):
         clock = pygame.time.Clock()
         group = Group(*self.current_wave)
@@ -94,46 +97,33 @@ class Game:
 
                         if self.game_bar.showing:
                             type_tower = self.game_bar.collide(*pos)
+                            self.game_bar.showing = False
                             if type_tower:
                                 self.selected_tower = type_tower
-                                self.game_bar.showing = False
-                                if self.selected_tower == 1:
+                                if self.selected_tower == 1 and self.money >= 50:
                                     tower = ArcherTower(*self.t_points[str(self.cur_pos)][0])
-                                    if self.money >= tower.price[tower.level]:
-                                        self.money -= tower.price[tower.level]
-                                        self.towers.append(tower)
-                                        self.t_points[str(self.cur_pos)][1] = 1
-                                    else:
-                                        towers_sprites.remove(tower)
-                                    self.clicks.append(pos)
-                                elif self.selected_tower == 2:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                    self.t_points[str(self.cur_pos)][1] = 1
+
+                                elif self.selected_tower == 2 and self.money >= 75:
                                     tower = CrossbowTower(*self.t_points[str(self.cur_pos)][0])
-                                    if self.money >= tower.price[tower.level]:
-                                        self.money -= tower.price[tower.level]
-                                        self.towers.append(tower)
-                                        self.t_points[str(self.cur_pos)][1] = 1
-                                    else:
-                                        towers_sprites.remove(tower)
-                                    self.clicks.append(pos)
-                                elif self.selected_tower == 3:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                    self.t_points[str(self.cur_pos)][1] = 2
+
+                                elif self.selected_tower == 3 and self.money >= 125:
                                     tower = PowerTower(*self.t_points[str(self.cur_pos)][0])
-                                    if self.money >= tower.price[tower.level]:
-                                        self.money -= tower.price[tower.level]
-                                        self.towers.append(tower)
-                                        self.t_points[str(self.cur_pos)][1] = 1
-                                    else:
-                                        towers_sprites.remove(tower)
-                                    self.clicks.append(pos)
-                                elif self.selected_tower == 4:
+                                    self.money -= tower.price[tower.level]
+                                    self.towers.append(tower)
+                                    self.t_points[str(self.cur_pos)][1] = 3
+
+                                elif self.selected_tower == 4 and self.money >= 150:
                                     tower = MagicTower(*self.t_points[str(self.cur_pos)][0])
                                     if self.money >= tower.price[tower.level]:
                                         self.money -= tower.price[tower.level]
                                         self.towers.append(tower)
-                                        self.t_points[str(self.cur_pos)][1] = 1
-                                    else:
-                                        towers_sprites.remove(tower)
-                            else:
-                                self.game_bar.showing = False
+                                        self.t_points[str(self.cur_pos)][1] = 4
 
                         else:
                             for tower in self.towers:
@@ -157,15 +147,12 @@ class Game:
                 if event.type == NEW_ENEMY and not self.paused:
                     t = group.delay
                     group.delay += self.delay
-                    group.update(self.enemies)
+                    self.ready_to_next_wave = group.update(self.enemies)
                     group.delay = t
                     self.delay = 0
 
                 if event.type == NEW_WAVE and not self.paused:
-                    self.wave += 1
-                    if self.wave + 1 < len(waves):
-                        self.current_wave = waves[self.wave][:]
-                        group = Group(*self.current_wave)
+                    self.change_wave()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -183,13 +170,13 @@ class Game:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        # self.enemies = []
-                        # self.towers = []
                         towers_sprites.empty()
                         enemies_sprites.empty()
                         self.running = False
                         for timer in self.timers:
                             pygame.time.set_timer(timer, 0)
+            if self.ready_to_next_wave and not self.enemies:
+                self.change_wave()
             if not self.paused:
                 self.draw()
                 self.delay = 0
@@ -272,3 +259,11 @@ class Game:
                             pygame.time.set_timer(timer, 0)
                         self.wait = False
 
+    def change_wave(self):
+        self.wave += 1
+        if self.wave + 1 < len(waves):
+            self.current_wave = waves[self.wave][:]
+            self.ready_to_next_wave = False
+            group = Group(*self.current_wave)
+        else:
+            pygame.time.set_timer(NEW_WAVE, 0)

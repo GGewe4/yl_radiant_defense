@@ -28,5 +28,5 @@ class CrossbowTower(Tower):
         self.range = 200
         self.splash = False
 
-        self.sell_price = [150, 300, 500]
-        self.price = [150, 300, 500]
+        self.sell_price = [75, 300, 500]
+        self.price = [75, 300, 500]
