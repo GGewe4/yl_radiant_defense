@@ -7,7 +7,7 @@ pygame.init()
 
 class PowerTower(Tower):
     main_img = pygame.transform.scale(
-        load_image('data/towers/power/frame_00_delay-0.04s-removebg-preview.png', -1),
+        load_image('data/towers/power/power_frame_00.png', -1),
         (100, 170))
     attack_imgs = []
     for x in range(23):
@@ -15,7 +15,7 @@ class PowerTower(Tower):
         if x < 10:
             add_str = "0" + add_str
         attack_imgs.append(pygame.transform.scale(load_image(
-            f"data/towers/power/attack/frame_" + add_str + "_delay-0.04s-removebg-preview.png", -1),
+            f"data/towers/power/attack/power_frame_" + add_str + ".png", -1),
             (100, 170)))
 
     def __init__(self, x, y):

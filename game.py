@@ -15,83 +15,81 @@ from towers.magic_tower import MagicTower
 from towers.power import PowerTower
 from towers.tower import towers_sprites
 
-# from enemies.minotaur import Minotaur
-# from enemies.golem import Golem
-# from enemies.wraith import Wraith
-# from enemies.satyr import Satyr
-
-
-#  [(856, 19), (820, 131), (670, 153), (439, 157), (342, 209),
-#  (302, 266), (336, 321), (380, 389), (360, 455),
-#  (403, 505), (471, 528), (557, 522), (619, 570), (634, 702)]
-
 waves = [
     [3, 5, 3500],
     [2, 3, 4000],
     [0, 0, 0]]
-# [2, 3, 2000],
-# [0, 10, 1000]]
 
+# global var
 LEVEL = 1
 
 
 class Game:
     def __init__(self, wind, level=1):
         global LEVEL
+        # my event.type for discard
         self.timers = [NEW_WAVE, NEW_ENEMY]
+        # base attributes
         self.wind = wind
-        self.width = 1280  # 1600 900, 16/9
-        self.height = 720
-        self.backg = pygame.image.load("data/ui/bg_test5.png")
-        self.win_img = pygame.transform.scale(pygame.image.load('data/ui/win_screen.png'),
-                                              (1280, 720))
-        self.lose_img = pygame.transform.scale(pygame.image.load('data/ui/lose.png'), (1280, 720))
-        self.backg = pygame.transform.scale(self.backg, (self.width, self.height))
-        self.clicks = []  # delete
-        self.circ = []
-        with open(os.path.join(f'levels/level{1}/path.txt')) as file:
-            self.circ = eval(''.join(file.readlines()))
-        self.enemies = []
-        self.towers = []
-        self.del_enemies = []
-        self.c = 0  # animation count
-
-        self.mus = GMusic()
-        self.mus.play_m('1lvl')
-
-        self.wave = 0
-        self.current_wave = waves[self.wave][:]
-        self.delay = 0
-        self.selected_tower = 0
-
         self.level = level
         self.paused = True
         LEVEL = self.level
+        # 1600 900, 16/9
+        self.width = 1280
+        self.height = 720
 
+        # load background, win and lose image
+        self.backg = pygame.transform.scale(pygame.image.load("data/ui/bg_test5.png"),
+                                            (self.width, self.height))
+        self.win_img = pygame.transform.scale(pygame.image.load('data/ui/win_screen.png'),
+                                              (1280, 720))
+        self.lose_img = pygame.transform.scale(pygame.image.load('data/ui/lose.png'), (1280, 720))
+
+        self.clicks = []  # list of clicks for debugging
+        self.circ = []  # path for enemy
+        with open(os.path.join(f'levels/level{self.level}/path.txt')) as file:
+            self.circ = eval(''.join(file.readlines()))
+        # list for enemies, towers, and enemies to del
+        self.enemies = []
+        self.towers = []
+        self.del_enemies = []
+        self.animation_count = 0  # animation count
+        # create music and game ui
+        self.game_bar = GameBar()
+        self.mus = GMusic()
+        self.mus.play_m('1lvl')
+        # args for cor wave
+        self.wave = 0
+        self.current_wave = waves[self.wave][:]
+        # pause delay
+        self.delay = 0
+        # type of selected tower
+        self.selected_tower = 0
+        # gameplay attributes
         self.lives = 1
         self.money = 5000
-
-        self.game_bar = GameBar()
         self.running = True
-
+        # copy the dict
         self.t_points = copy.deepcopy(LVL1_TOWERS)
+        # par for win or lose
         self.wait = True
-
+        # cor change wave
         self.ready_to_next_wave = False
 
     def run(self):
+        # main cycle
         clock = pygame.time.Clock()
         group = Group(*self.current_wave)
         self.wind.blit(self.backg, (0, 0))
-        # self.game_bar.draw(self.wind)
         pygame.display.update()
         while self.running:
-            self.c += 1
+            self.animation_count += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     print(self.clicks)
                     sys.exit()
                 pos = pygame.mouse.get_pos()
+                # processing click mouse button
                 if event.type == pygame.MOUSEBUTTONDOWN and not self.paused:
                     if event.button == 1:
 
@@ -144,6 +142,7 @@ class Game:
                                     break
                     self.clicks.append(pos)
 
+                # add new enemy with cor pause delay
                 if event.type == NEW_ENEMY and not self.paused:
                     t = group.delay
                     group.delay += self.delay
@@ -151,9 +150,11 @@ class Game:
                     group.delay = t
                     self.delay = 0
 
+                # processing new wave
                 if event.type == NEW_WAVE and not self.paused:
                     self.change_wave()
 
+                # processing keyboard
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.clicks.clear()
@@ -167,16 +168,19 @@ class Game:
                         self.mus.play_m('zihte')
                     elif event.key == pygame.K_LSHIFT:
                         self.paused = not self.paused
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    elif event.key == pygame.K_ESCAPE:
+                        # exit to main menu
                         towers_sprites.empty()
                         enemies_sprites.empty()
                         self.running = False
                         for timer in self.timers:
                             pygame.time.set_timer(timer, 0)
+
+            # processing new wave
             if self.ready_to_next_wave and not self.enemies:
                 self.change_wave()
+
+            # processing pause the game
             if not self.paused:
                 self.draw()
                 self.delay = 0
@@ -185,40 +189,46 @@ class Game:
             clock.tick(120)
 
     def draw(self):
+        # main func for draw
         self.del_enemies = []
+        # blit background and game ui
         self.wind.blit(self.backg, (0, 0))
         self.game_bar.draw(self.wind, self.lives, self.money)
-        enemies_sprites.draw(self.wind)
-        if self.c % 6 == 0:
+
+        # animation for towers and enemies
+        if self.animation_count % 6 == 0:
             enemies_sprites.update()
-        if self.c % 8 == 0:
+        if self.animation_count % 8 == 0:
             towers_sprites.update(self.enemies)
-        for t in self.towers:
-            t.collide(self.wind, 0, 0)
-            if t.selected:
-                t.draw_radius(self.wind)
-            self.money += t.attack(self.enemies)
+
+        enemies_sprites.draw(self.wind)
+
+        for tower in self.towers:
+            if tower.selected:
+                tower.draw_radius(self.wind)
+            # attack for towers
+            self.money += tower.attack(self.enemies)
+
         towers_sprites.draw(self.wind)
-        for en in self.enemies:
-            # pygame.draw.circle(self.wind, (0, 255, 0), (en.hit_box.x + en.hit_box.width // 2,
-            # en.hit_box.y + en.hit_box.height // 2), 5)
-            if en.new_move(self.wind):
+
+        for enemy in self.enemies:
+            # debug
+            # pygame.draw.circle(self.wind, (0, 255, 0), (enemy.hit_box.x + enemy.hit_box.width
+            # // 2, enemy.hit_box.y + enemy.hit_box.height // 2), 5)
+            if enemy.new_move(self.wind):
+                # processing reach point and lose
                 self.lives -= 1
                 if self.lives <= 0:
                     self.lose()
-                #     self.run = False
-                #     self.enemies = []
-                #     self.towers = []
-                #     towers_sprites.empty()
-                #     enemies_sprites.empty()
-                #     for timer in self.timers:
-                #         pygame.time.set_timer(timer, 0)
-                self.del_enemies.append(en)
+                self.del_enemies.append(enemy)
+        # processing win
         if self.wave == len(waves) - 1 and not self.enemies:
             self.win()
-        for en in self.del_enemies:
-            enemies_sprites.remove(en)
-            self.enemies.remove(en)
+        # remove all dying enemies
+        for enemy in self.del_enemies:
+            enemies_sprites.remove(enemy)
+            self.enemies.remove(enemy)
+        # debug
         # for p in self.clicks:
         #     pygame.draw.circle(self.wind, (255, 0, 0), (p[0], p[1]), 5, 0)
         # for circ in self.circ:
@@ -226,13 +236,14 @@ class Game:
         pygame.display.update()
 
     def win(self):
+        # processing win
         self.wind.blit(self.win_img, (0, 0))
         pygame.display.update()
+        # wait the mouse click
         while self.wait:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         towers_sprites.empty()
@@ -243,13 +254,14 @@ class Game:
                         self.wait = False
 
     def lose(self):
+        # processing lose
         self.wind.blit(self.lose_img, (0, 0))
         pygame.display.update()
+        # wait the mouse click
         while self.wait:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         towers_sprites.empty()
@@ -260,6 +272,7 @@ class Game:
                         self.wait = False
 
     def change_wave(self):
+        # go to the next wave
         self.wave += 1
         if self.wave + 1 < len(waves):
             self.current_wave = waves[self.wave][:]

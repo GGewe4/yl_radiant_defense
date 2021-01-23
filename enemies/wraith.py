@@ -10,7 +10,7 @@ class Wraith(Enemy):
         if x < 10:
             add_str = "0" + add_str
         imgs.append(pygame.transform.scale(load_image(
-            f"data/enemies/wraith/Walking/Wraith_01_MovingForward_0" + add_str + ".png"), (80, 65)))
+            f"data/enemies/wraith/Walking/Wraith_frame_" + add_str + ".png"), (80, 65)))
 
     def __init__(self, level_path=1):
         super().__init__(level_path)

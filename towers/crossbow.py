@@ -7,7 +7,7 @@ pygame.init()
 
 class CrossbowTower(Tower):
     main_img = pygame.transform.scale(
-        load_image('data/towers/crossbow/frame_00_delay-0.04s.png', -1),
+        load_image('data/towers/crossbow/crossbow_frame_00.png', -1),
         (100, 170))
     attack_imgs = []
     for x in range(10):
@@ -15,7 +15,7 @@ class CrossbowTower(Tower):
         if x < 10:
             add_str = "0" + add_str
         attack_imgs.append(pygame.transform.scale(load_image(
-            f"data/towers/crossbow/attack/frame_" + add_str + "_delay-0.04s.png", -1), (100, 170)))
+            f"data/towers/crossbow/attack/crossbow_frame_" + add_str + ".png", -1), (100, 170)))
 
     def __init__(self, x, y):
         super().__init__(x, y)

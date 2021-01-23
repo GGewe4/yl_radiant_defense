@@ -6,7 +6,7 @@ pygame.init()
 
 
 class MagicTower(Tower):
-    main_img = pygame.transform.scale(load_image('data/towers/magic/frame_00_delay-0.04s.png', -1),
+    main_img = pygame.transform.scale(load_image('data/towers/magic/magic_frame_00.png', -1),
                                       (150, 170))
     attack_imgs = []
     for x in range(16):
@@ -14,7 +14,7 @@ class MagicTower(Tower):
         if x < 10:
             add_str = "0" + add_str
         attack_imgs.append(pygame.transform.scale(load_image(
-            f"data/towers/magic/attack/frame_" + add_str + "_delay-0.04s.png", -1), (150, 170)))
+            f"data/towers/magic/attack/magic_frame_" + add_str + ".png", -1), (150, 170)))
 
     def __init__(self, x, y):
         super().__init__(x, y)

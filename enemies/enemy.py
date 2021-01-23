@@ -11,50 +11,44 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__(enemies_sprites)
         self.max_health = 10
         self.health = 10
-        self.frames = []
-        self.cur_frame = 0
-        self.state = 0  # 0 if walking, 1 if dying
+        self.money_for_kill = 40
+
+        self.frames = []  # images for draw
+        self.cor_frame = 0  # index of cur frame for draw
+
         with open(os.path.join(f'{DIR_LEVELS}/level{level_path}/path.txt')) as file:
             self.path = eval(''.join(file.readlines()))
             self.path = list(map(lambda x: (x[0], x[1] - 50), self.path))
-        self.x = self.path[0][0]
-        self.y = self.path[0][1]
+        # position of enemy, velocity and correction image
+        self.x2 = self.x = self.path[0][0]
+        self.y2 = self.y = self.path[0][1]
         self.vel_x = 0
         self.vel_y = 0
-        self.vel = 100 / 120
-        self.money_for_kill = 40
+        self.vel = 100 / 120  # abs of velocity
+        self.path_pos = 0  # position in path
+        self.flipped = True  # correction flip image
 
-        self.dis = 0
-        self.path_pos = 0
-        self.move_count = 0
-        self.move_dis = 0
-        self.flipped = True
-
+        # args for hit box enemy
         self.delta_x = 0
         self.delta_y = 0
         self.min_x = 0
         self.min_y = 0
 
-        self.x2 = self.x
-        self.y2 = self.y
-
-    def draw(self):
-        pass
-
-    def collide(self):
-        pass
-
     def hit(self, damage):
+        # hit enemy, return True if dying
         self.health -= damage
         if self.health <= 0:
             pygame.sprite.Sprite.kill(self)
             return True
 
     def update(self):
-        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-        self.image = self.frames[self.cur_frame]
+        # animation enemy
+        self.cor_frame = (self.cor_frame + 1) % len(self.frames)
+        self.image = self.frames[self.cor_frame]
 
     def new_move(self, wind):
+        # move the enemy, update hit box,
+        # check if enemy reached the point
         self.x += self.vel_x
         self.y += self.vel_y
         self.rect = pygame.Rect(self.x, self.y, self.image.get_width() - 20,
@@ -62,20 +56,21 @@ class Enemy(pygame.sprite.Sprite):
         self.hit_box = pygame.Rect(self.x + self.delta_x, self.y + self.delta_y,
                                    self.image.get_width() - self.min_x,
                                    self.image.get_height() - self.min_y)
-        # print(self.x, self.y, '    |    ', self.x2, self.y2)
         self.draw_health_bar(wind)
         if abs(self.x - self.x2) <= self.vel * 2 and abs(self.y - self.y2) <= self.vel * 2:
             return self.change_vel()
 
     def change_vel(self):
-        f = False
+        # enemy go to the next point, change velocity enemy
+        # return if enemy reached last point
+        reach_last_point = False
         x1, y1 = self.path[min(self.path_pos, len(self.path) - 1)]
         if self.path_pos + 1 >= len(self.path):
             x2, y2 = (609, 800)
         else:
             x2, y2 = self.path[self.path_pos + 1]
         if self.path_pos + 1 == len(self.path):
-            f = True
+            reach_last_point = True
         distance = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
         self.vel_x = (x2 - x1) / (distance / self.vel)
         self.vel_y = (y2 - y1) / (distance / self.vel)
@@ -90,9 +85,10 @@ class Enemy(pygame.sprite.Sprite):
         self.x2 = x2
         self.y2 = y2
         self.path_pos += 1
-        return f
+        return reach_last_point
 
     def draw_health_bar(self, wind):
+        # draw enemy's health bar, optional hit box
         length = 50
         move_by = length / self.max_health
         health_bar = round(move_by * self.health)
@@ -101,6 +97,7 @@ class Enemy(pygame.sprite.Sprite):
         # pygame.draw.rect(wind, (255, 255, 255), self.hit_box, 5)
 
 
+# base function for load image for enemy
 def load_image(name, colorkey=None):
     pygame.init()
     fullname = os.path.join(name)
