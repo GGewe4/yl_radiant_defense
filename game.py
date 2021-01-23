@@ -42,7 +42,7 @@ class Game:
         self.height = 720
 
         # load background, win and lose image
-        self.backg = pygame.transform.scale(pygame.image.load("data/ui/bg_test5.png"),
+        self.backg = pygame.transform.scale(pygame.image.load("data/ui/bg.png"),
                                             (self.width, self.height))
         self.win_img = pygame.transform.scale(pygame.image.load('data/ui/win_screen.png'),
                                               (1280, 720))
@@ -91,7 +91,6 @@ class Game:
             self.animation_count += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    print(self.clicks)
                     sys.exit()
                 pos = pygame.mouse.get_pos()
                 # processing click mouse button
