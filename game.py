@@ -1,9 +1,7 @@
 import copy
 import os
 import sys
-
 import pygame
-
 from audio import GMusic
 from enemies.enemy import enemies_sprites
 from enemies.groupe_enemies import NEW_ENEMY, Group, NEW_WAVE
@@ -25,7 +23,7 @@ LEVEL = 1
 
 
 class Game:
-    def __init__(self, wind, level=1):
+    def __init__(self, wind, mus_pause, level=1):
         global LEVEL
         # my event.type for discard
         self.timers = [NEW_WAVE, NEW_ENEMY]
@@ -44,6 +42,8 @@ class Game:
         self.win_img = pygame.transform.scale(pygame.image.load('data/ui/win_screen.png'),
                                               (1280, 720))
         self.lose_img = pygame.transform.scale(pygame.image.load('data/ui/lose.png'), (1280, 720))
+        self.mus_icon = pygame.transform.scale(pygame.image.load("data/ui/mus_icon.jpg"), (50, 50))
+        self.krest_icon = pygame.transform.scale(pygame.image.load("data/ui/krest.png"), (50, 50))
 
         self.clicks = []  # list of clicks for debugging
         self.circ = []  # path for enemy
@@ -56,7 +56,7 @@ class Game:
         self.animation_count = 0  # animation count
         # create music and game ui
         self.game_bar = GameBar()
-        self.mus = GMusic()
+        self.mus = GMusic(pause=mus_pause)
         self.mus.play_m('1lvl')
         # args for cor wave
         self.wave = 0
@@ -92,8 +92,15 @@ class Game:
                 # processing click mouse button
                 if event.type == pygame.MOUSEBUTTONDOWN and not self.paused:
                     if event.button == 1:
+                        if pos[0] in range(30, 80) and pos[1] in range(600, 650):
+                            if self.mus.is_paused:
+                                self.mus.is_paused = False
+                                self.mus.unpause_m()
+                            else:
+                                self.mus.is_paused = True
+                                self.mus.pause_m()
 
-                        if self.game_bar.showing:
+                        elif self.game_bar.showing:
                             type_tower = self.game_bar.collide(*pos)
                             self.game_bar.showing = False
                             if type_tower:
@@ -228,6 +235,9 @@ class Game:
         # processing win
         if self.wave == len(waves) - 1 and not self.enemies:
             self.win()
+        self.wind.blit(self.mus_icon, (30, 600))
+        if self.mus.is_paused:
+            self.wind.blit(self.krest_icon, (30, 600))
         # remove all dying enemies
         for enemy in self.del_enemies:
             enemies_sprites.remove(enemy)

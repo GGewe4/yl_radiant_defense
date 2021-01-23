@@ -23,11 +23,9 @@ class MainMenu:
         self.m_y = 0
 
         self.m_icon = pygame.image.load("data/ui/mus_icon.jpg")
-
         self.krest = pygame.image.load("data/ui/krest.png")
         self.krest = self.krest.convert_alpha()
         self.krest = pygame.transform.scale(self.krest, (58, 60))
-
         self.triangle = pygame.image.load("data/ui/cht.png")
         self.triangle = self.triangle.convert_alpha()
         self.triangle = pygame.transform.scale(self.triangle, (75, 75))
@@ -103,7 +101,7 @@ class MainMenu:
         pygame.display.update()
 
     def run_game(self):
-        game = Game(self.wind)
+        game = Game(self.wind, self.mus.is_paused)
         game.run()
         del game
         self.mus.play_m('hom')
