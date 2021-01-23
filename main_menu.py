@@ -65,22 +65,22 @@ class MainMenu:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         self.tr_pos = (self.tr_pos - 1) % 3
-
-                    if event.key == pygame.K_DOWN:
+                    elif event.key == pygame.K_DOWN:
                         self.tr_pos = (self.tr_pos + 1) % 3
-
-                    if event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_SPACE:
                         if self.tr_pos == 1:
                             self.run_game()
-
                         elif self.tr_pos == 2:
                             if self.mus.name == 'hom':
                                 self.mus.play_m('gelik')
                             else:
                                 self.mus.play_m('hom')
-
                         else:
                             sys.exit()
+                    elif event.key == pygame.K_EQUALS:
+                        self.mus.change_volume(self.mus.volume + 0.05)
+                    elif event.key == pygame.K_MINUS:
+                        self.mus.change_volume(self.mus.volume - 0.05)
 
             self.draw()
         pygame.quit()

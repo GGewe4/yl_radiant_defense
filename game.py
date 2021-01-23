@@ -162,12 +162,16 @@ class Game:
                             self.mus.unpause_m()
                         else:
                             self.mus.pause_m()
-                    elif event.key == pygame.K_g:
-                        self.mus.play_m('gelik')
-                    elif event.key == pygame.K_m:
-                        self.mus.play_m('zihte')
+                    elif event.key == pygame.K_PERIOD:
+                        self.mus.next_track()
+                    elif event.key == pygame.K_COMMA:
+                        self.mus.prev_track()
                     elif event.key == pygame.K_LSHIFT:
                         self.paused = not self.paused
+                    elif event.key == pygame.K_EQUALS:
+                        self.mus.change_volume(self.mus.volume + 0.05)
+                    elif event.key == pygame.K_MINUS:
+                        self.mus.change_volume(self.mus.volume - 0.05)
                     elif event.key == pygame.K_ESCAPE:
                         # exit to main menu
                         towers_sprites.empty()
