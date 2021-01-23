@@ -19,12 +19,15 @@ class Minotaur(Enemy):
         self.state = 0  # 0 if walking, 1 if dying
         self.image = self.frames[self.cur_frame]
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_width())
+        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
         self.rect = self.rect.move(self.x, self.y)
-        self.change_vel()
 
         self.delta_x = 20
         self.delta_y = 10
         self.min_x = 40
         self.min_y = 10
 
-        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
+        self.money_for_kill = 25
+        self.vel = 20 / 120
+        self.health = self.max_health = 100
+        self.change_vel()

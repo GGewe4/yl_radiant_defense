@@ -26,8 +26,9 @@ class CrossbowTower(Tower):
         self.rect = self.rect.move(self.x - self.image.get_width() // 2,
                                    self.y - self.image.get_width() // 2 - 90)
         self.range = 200
-        self.splash = True
+        self.damage = 5
+        self.splash = False
 
         self.sell_price = [75, 300, 500]
         self.price = [75, 300, 500]
-        self.damage = 10
+        self.damage = 7

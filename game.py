@@ -14,10 +14,13 @@ from towers.power import PowerTower
 from towers.tower import towers_sprites
 
 waves = [
-    [0, 10, 3500],
-    [1, 10, 4000],
-    [2, 10, 2000],
-    [3, 10, 1000],
+    [3, 9, 4000],
+    [2, 4, 5000],
+    [1, 10, 9000],
+    [0, 5, 3000],
+    [1, 20, 2500],
+    [2, 10, 1500],
+    [3, 25, 1000],
     [0, 0, 0]]
 
 # global var
@@ -68,8 +71,8 @@ class Game:
         # type of selected tower
         self.selected_tower = 0
         # gameplay attributes
-        self.lives = 1
-        self.money = 5000
+        self.lives = 20
+        self.money = 300
         self.running = True
         # copy the dict
         self.t_points = copy.deepcopy(LVL1_TOWERS)
@@ -161,7 +164,6 @@ class Game:
 
                 # processing new wave
                 if event.type == NEW_WAVE and not self.paused:
-                    print(123)
                     self.change_wave()
 
                 # processing keyboard
@@ -191,7 +193,6 @@ class Game:
                             pygame.time.set_timer(timer, 0)
             # processing new wave
             if self.ready_to_next_wave and not self.enemies:
-                print(321)
                 self.change_wave()
 
             # processing pause the game

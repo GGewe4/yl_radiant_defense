@@ -26,8 +26,9 @@ class PowerTower(Tower):
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_height())
         self.rect = self.rect.move(self.x - self.image.get_width() // 2,
                                    self.y - self.image.get_width() // 2 - 90)
-        self.range = 250
+        self.range = 350
+        self.damage = 9
         self.splash = False
 
-        self.sell_price = [200, 500, 700]
-        self.price = [200, 500, 700]
+        self.sell_price = [125, 500, 700]
+        self.price = [125, 500, 700]

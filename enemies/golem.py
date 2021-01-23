@@ -21,11 +21,13 @@ class Golem(Enemy):
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_height())
         self.rect = self.rect.move(self.x, self.y)
         self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
-        self.change_vel()
 
         self.delta_x = 20
         self.delta_y = 10
         self.min_x = 40
         self.min_y = 10
 
-        self.health = self.max_health = 20
+        self.money_for_kill = 25
+        self.health = self.max_health = 80
+        self.vel = 20 / 120
+        self.change_vel()

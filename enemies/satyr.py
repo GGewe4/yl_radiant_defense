@@ -20,11 +20,14 @@ class Satyr(Enemy):
         self.image = self.frames[self.cur_frame]
         self.rect = pygame.Rect(0, 0, self.image.get_width(), self.image.get_width())
         self.rect = self.rect.move(self.x, self.y)
-        self.change_vel()
+        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
 
         self.delta_x = 15
         self.delta_y = 7
         self.min_x = 30
         self.min_y = 17
 
-        self.hit_box = pygame.Rect(self.x, self.y, *self.image.get_size())
+        self.money_for_kill = 5
+        self.vel = 40 / 120
+        self.health = self.max_health = 25
+        self.change_vel()

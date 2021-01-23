@@ -23,6 +23,7 @@ class ArcherTower(Tower):
         self.rect = self.rect.move(self.x - self.image.get_width() // 2,
                                    self.y - self.image.get_width() // 2 - 90)
         self.range = 120
+        self.damage = 3
         self.splash = False
 
         self.sell_price = [50, 150, 300]

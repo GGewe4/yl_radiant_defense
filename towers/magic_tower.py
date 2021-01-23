@@ -25,7 +25,8 @@ class MagicTower(Tower):
         self.rect = self.rect.move(self.x - self.image.get_width() // 2,
                                    self.y - self.image.get_width() // 2 - 60)
         self.range = 100
+        self.damage = 2
         self.splash = True
 
-        self.sell_price = [250, 700, 1000]
-        self.price = [250, 700, 1000]
+        self.sell_price = [150, 700, 1000]
+        self.price = [150, 700, 1000]
