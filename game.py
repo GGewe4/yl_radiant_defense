@@ -79,7 +79,7 @@ class Game:
     def run(self):
         # main cycle
         clock = pygame.time.Clock()
-        group = Group(*self.current_wave)
+        self.group = Group(*self.current_wave)
         self.wind.blit(self.backg, (0, 0))
         pygame.display.update()
         while self.running:
@@ -144,10 +144,10 @@ class Game:
 
                 # add new enemy with cor pause delay
                 if event.type == NEW_ENEMY and not self.paused:
-                    t = group.delay
-                    group.delay += self.delay
-                    self.ready_to_next_wave = group.update(self.enemies)
-                    group.delay = t
+                    t = self.group.delay
+                    self.group.delay += self.delay
+                    self.ready_to_next_wave = self.group.update(self.enemies)
+                    self.group.delay = t
                     self.delay = 0
 
                 # processing new wave
@@ -277,6 +277,6 @@ class Game:
         if self.wave + 1 < len(waves):
             self.current_wave = waves[self.wave][:]
             self.ready_to_next_wave = False
-            group = Group(*self.current_wave)
+            self.group = Group(*self.current_wave)
         else:
             pygame.time.set_timer(NEW_WAVE, 0)
