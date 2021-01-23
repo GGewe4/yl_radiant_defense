@@ -14,8 +14,10 @@ from towers.power import PowerTower
 from towers.tower import towers_sprites
 
 waves = [
-    [3, 5, 3500],
-    [2, 3, 4000],
+    [0, 10, 3500],
+    [1, 10, 4000],
+    [2, 10, 2000],
+    [3, 10, 1000],
     [0, 0, 0]]
 
 # global var
@@ -159,6 +161,7 @@ class Game:
 
                 # processing new wave
                 if event.type == NEW_WAVE and not self.paused:
+                    print(123)
                     self.change_wave()
 
                 # processing keyboard
@@ -186,9 +189,9 @@ class Game:
                         self.running = False
                         for timer in self.timers:
                             pygame.time.set_timer(timer, 0)
-
             # processing new wave
             if self.ready_to_next_wave and not self.enemies:
+                print(321)
                 self.change_wave()
 
             # processing pause the game
@@ -287,6 +290,7 @@ class Game:
 
     def change_wave(self):
         # go to the next wave
+        pygame.time.set_timer(NEW_WAVE, 0)
         self.wave += 1
         if self.wave + 1 < len(waves):
             self.current_wave = waves[self.wave][:]
@@ -294,3 +298,4 @@ class Game:
             self.group = Group(*self.current_wave)
         else:
             pygame.time.set_timer(NEW_WAVE, 0)
+            pygame.time.set_timer(NEW_ENEMY, 0)
