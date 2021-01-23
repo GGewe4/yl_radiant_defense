@@ -24,7 +24,6 @@ class Enemy(pygame.sprite.Sprite):
         self.y2 = self.y = self.path[0][1]
         self.vel_x = 0
         self.vel_y = 0
-        self.vel = 100 / 120  # abs of velocity
         self.path_pos = 0  # position in path
         self.flipped = True  # correction flip image
 

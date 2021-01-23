@@ -28,6 +28,6 @@ class Wraith(Enemy):
         self.min_y = 10
 
         self.money_for_kill = 10
-        self.vel = 60 / 120
+        self.vel = 50 / 120
         self.health = self.max_health = 50
         self.change_vel()
